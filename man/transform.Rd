@@ -11,7 +11,7 @@ transform(population, variables, operation = "generalized_log", ...)
 
 \item{variables}{character vector specifying observation variables.}
 
-\item{operation}{optional character string specifying method for transform. Currently, only \code{"generalized_log"} (default) is implemented.}
+\item{operation}{optional character string specifying method for transform. This must be one of the strings \code{"generalized_log"} (default), \code{"whiten"}.}
 
 \item{...}{arguments passed to transformation operation.}
 }
@@ -22,11 +22,10 @@ transformed data of the same class as \code{population}.
 \code{transform} transforms observation variables based on the specified transformation method.
 }
 \examples{
-population <- tibble::data_frame(
-   Metadata_Well = c("A01", "A02", "B01", "B02"),
-   Intensity_DNA = c(8, 20, 12, 32)
- )
+population <- tibble::tibble(
+  Metadata_Well = c("A01", "A02", "B01", "B02"),
+  Intensity_DNA = c(8, 20, 12, 32)
+)
 variables <- c("Intensity_DNA")
 transform(population, variables, operation = "generalized_log")
-
 }

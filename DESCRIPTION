@@ -1,7 +1,8 @@
+Encoding: UTF-8
 Package: cytominer
 Type: Package
 Title: Methods for Image-Based Cell Profiling
-Version: 0.1.0
+Version: 0.2.1
 Authors@R: c(person("Tim", "Becker", email = "tbecker@broadinstitute.org", role = "aut"),
     person("Allen", "Goodman", email = "allen.goodman@icloud.com", role = "aut"),
     person("Claire", "McQuin", email = "mcquin@broadinstitute.org", role = "aut"),
@@ -16,22 +17,22 @@ Description: Typical morphological profiling datasets have millions of cells
     these steps fast and easy. Methods used in practice in the field are
     discussed in Caicedo (2017) <doi:10.1038/nmeth.4397>. An overview of the
     field is presented in Caicedo (2016) <doi:10.1016/j.copbio.2016.04.003>.
-Depends: R (>= 3.3.3)
+Depends: R (>= 3.3.0)
 License: BSD_3_clause + file LICENSE
 LazyData: TRUE
-Imports: caret (>= 6.0.76), doParallel (>= 1.0.10), dplyr (>= 0.7.2),
+Imports: caret (>= 6.0.76), doParallel (>= 1.0.10), dplyr (>= 0.8.5),
         foreach (>= 1.4.3), futile.logger (>= 1.4.3), magrittr (>=
-        1.5), purrr (>= 0.2.3), rlang (>= 0.1.2), tibble (>= 1.3.4),
-        tidyr (>= 0.7.1)
-Suggests: DBI (>= 0.7), dbplyr (>= 1.1.0), knitr (>= 1.17), lazyeval
+        1.5), Matrix (>= 1.2), purrr (>= 0.3.3), rlang (>= 0.4.5),
+        tibble (>= 2.1.3), tidyr (>= 1.0.2)
+Suggests: DBI (>= 0.7), dbplyr (>= 1.4.2), knitr (>= 1.17), lazyeval
         (>= 0.2.0), readr (>= 1.1.1), rmarkdown (>= 1.6), RSQLite (>=
         2.0), stringr (>= 1.2.0), testthat (>= 1.0.2)
 VignetteBuilder: knitr
 URL: https://github.com/cytomining/cytominer
 BugReports: https://github.com/cytomining/cytominer/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2017-09-13 19:23:28 UTC; shsingh
+Packaged: 2020-03-20 21:09:50 UTC; shsingh
 Author: Tim Becker [aut],
   Allen Goodman [aut],
   Claire McQuin [aut],
@@ -39,4 +40,4 @@ Author: Tim Becker [aut],
   Shantanu Singh [aut, cre]
 Maintainer: Shantanu Singh <shsingh@broadinstitute.org>
 Repository: CRAN
-Date/Publication: 2017-09-17 18:25:04 UTC
+Date/Publication: 2020-03-23 10:40:02 UTC

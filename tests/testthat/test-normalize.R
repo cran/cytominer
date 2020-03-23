@@ -17,13 +17,13 @@ test_that("`normalize' normalizes data", {
 
   data <-
     dplyr::bind_rows(
-      generate_matrix(rnorm(2), rnorm(2) ^ 2) %>%
+      generate_matrix(rnorm(2), rnorm(2)^2) %>%
         dplyr::mutate(g1 = "a", g2 = "x"),
-      generate_matrix(rnorm(2), rnorm(2) ^ 2) %>%
+      generate_matrix(rnorm(2), rnorm(2)^2) %>%
         dplyr::mutate(g1 = "a", g2 = "y"),
-      generate_matrix(rnorm(2), rnorm(2) ^ 2) %>%
+      generate_matrix(rnorm(2), rnorm(2)^2) %>%
         dplyr::mutate(g1 = "b", g2 = "x"),
-      generate_matrix(rnorm(2), rnorm(2) ^ 2) %>%
+      generate_matrix(rnorm(2), rnorm(2)^2) %>%
         dplyr::mutate(g1 = "b", g2 = "y")
     )
 
@@ -47,41 +47,49 @@ test_that("`normalize' normalizes data", {
   data <- dplyr::copy_to(db, data)
 
   expect_lt(
-    mean(abs(
-      normalize(population = data,
-                variables = c("x", "y"),
-                strata = c("g1", "g2"),
-                sample = data,
-                operation = "standardize") %>%
-        dplyr::collect() %>%
-        dplyr::arrange(g3) %>%
-        dplyr::select(x, y) %>%
-        as.matrix() -
-      data_normalized %>%
-        dplyr::arrange(g3) %>%
-        dplyr::select(x, y) %>%
-        as.matrix()),
-      na.rm = TRUE
+    mean(
+      abs(
+        normalize(
+          population = data,
+          variables = c("x", "y"),
+          strata = c("g1", "g2"),
+          sample = data,
+          operation = "standardize"
+        ) %>%
+          dplyr::collect() %>%
+          dplyr::arrange(g3) %>%
+          dplyr::select(x, y) %>%
+          as.matrix() -
+          data_normalized %>%
+          dplyr::arrange(g3) %>%
+          dplyr::select(x, y) %>%
+          as.matrix()
       ),
+      na.rm = TRUE
+    ),
     .Machine$double.eps * 1000000
   )
 
-  #test after collecting so that data.frame -specific scale function is tested
+  # test after collecting so that data.frame -specific scale function is tested
   expect_lt(
-    mean(abs(
-      normalize(population = data %>% dplyr::collect(),
-                variables = c("x", "y"),
-                strata = c("g1", "g2"),
-                sample = data,
-                operation = "standardize") %>%
-        dplyr::collect() %>%
-        dplyr::arrange(g3) %>%
-        dplyr::select(x, y) %>%
-        as.matrix() -
-        data_normalized %>%
-        dplyr::arrange(g3) %>%
-        dplyr::select(x, y) %>%
-        as.matrix()),
+    mean(
+      abs(
+        normalize(
+          population = data %>% dplyr::collect(),
+          variables = c("x", "y"),
+          strata = c("g1", "g2"),
+          sample = data,
+          operation = "standardize"
+        ) %>%
+          dplyr::collect() %>%
+          dplyr::arrange(g3) %>%
+          dplyr::select(x, y) %>%
+          as.matrix() -
+          data_normalized %>%
+          dplyr::arrange(g3) %>%
+          dplyr::select(x, y) %>%
+          as.matrix()
+      ),
       na.rm = TRUE
     ),
     .Machine$double.eps * 1000000

@@ -26,15 +26,15 @@ variable-selected data of the same class as \code{population}.
 }
 \examples{
 
-# In this example, we use `correlation_threshold` as the operation for 
+# In this example, we use `correlation_threshold` as the operation for
 # variable selection.
 
 suppressMessages(suppressWarnings(library(magrittr)))
-population <- tibble::data_frame(
-   x = rnorm(100),
-   y = rnorm(100)/1000
- )
- 
+population <- tibble::tibble(
+  x = rnorm(100),
+  y = rnorm(100) / 1000
+)
+
 population \%<>\% dplyr::mutate(z = x + rnorm(100) / 10)
 
 sample <- population \%>\% dplyr::slice(1:30)
@@ -52,5 +52,4 @@ head(population)
 futile.logger::flog.threshold(futile.logger::ERROR)
 
 variable_select(population, variables, sample, operation) \%>\% head()
-
 }

@@ -7,59 +7,293 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <meta name="author" content="Allen Goodman and Shantanu Singh" />
 
-<meta name="date" content="2017-09-13" />
+<meta name="date" content="2020-03-20" />
 
 <title>Introduction to cytominer</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -69,8 +303,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Introduction to cytominer</h1>
-<h4 class="author"><em>Allen Goodman and Shantanu Singh</em></h4>
-<h4 class="date"><em>2017-09-13</em></h4>
+<h4 class="author">Allen Goodman and Shantanu Singh</h4>
+<h4 class="date">2020-03-20</h4>
 
 
 
@@ -87,34 +321,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
 <p>First, load the data, which is stored in a database backend created using <a href="https://github.com/cytomining/cytominer-database" class="uri">https://github.com/cytomining/cytominer-database</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fixture &lt;-
-<span class="st">  </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;fixture_intensities_shapes.sqlite&quot;</span>,
-              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)
-
-db &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), fixture)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">fixture &lt;-</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;fixture_intensities_shapes.sqlite&quot;</span>,</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">db &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), fixture)</a></code></pre></div>
 <p>Then load associated metadata if it exists, and copy it to the backend so that we can use it later.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ext_metadata &lt;-
-<span class="st">  </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;metadata.csv&quot;</span>,
-                              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">g_well =</span> Well)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">ext_metadata &lt;-</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;metadata.csv&quot;</span>,</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">                              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">g_well =</span> Well)</a></code></pre></div>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   Well = col_character(),
 ##   Type = col_character()
 ## )</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ext_metadata &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">copy_to</span>(db, ext_metadata)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">ext_metadata &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">copy_to</span>(db, ext_metadata)</a></code></pre></div>
 <p>Next, select a measurement table that you want to work. Here, we will pick <code>intensities</code> but we can easily extend to using multiple or all measurement classes if needed by creating new views.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">intensities &lt;-
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tbl</span>(<span class="dt">src =</span> db, <span class="st">&quot;view_intensities&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">intensities &lt;-</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tbl</span>(<span class="dt">src =</span> db, <span class="st">&quot;view_intensities&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</a></code></pre></div>
 <p>For this example, lets filter the data down to a few wells.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">measurements &lt;-
-<span class="st">  </span>intensities <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(g_well <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A01&quot;</span>, <span class="st">&quot;A02&quot;</span>, <span class="st">&quot;A10&quot;</span>, <span class="st">&quot;A11&quot;</span>))</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">measurements &lt;-</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>intensities <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(g_well <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A01&quot;</span>, <span class="st">&quot;A02&quot;</span>, <span class="st">&quot;A10&quot;</span>, <span class="st">&quot;A11&quot;</span>))</a></code></pre></div>
 <p>How many rows does this table have?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">measurements <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>() <span class="op">%&gt;%</span>
-<span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">measurements <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</a></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -129,34 +363,34 @@ db &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">d
 </table>
 <p>That actually 9 times the number of cells in this experiment (n = 40): each compartment and each channel gets its own row. Here, we have 3 compartments (cell, nucleus, cytoplasm) and 3 channels (CellMask, Hoechst, Alexa568). So that’s 3 x 3 x 40 = 360.</p>
 <p>Next, do some setup stuff that we will need later</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qc_cols &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;q_debris&quot;</span>)
-
-group_cols &lt;-
-<span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>,
-    <span class="st">&quot;g_well&quot;</span>,
-    <span class="st">&quot;g_image&quot;</span>,
-    <span class="st">&quot;g_pattern&quot;</span>,
-    <span class="st">&quot;g_channel&quot;</span>)
-
-feature_cols &lt;-
-<span class="st">  </span><span class="kw">colnames</span>(measurements) <span class="op">%&gt;%</span>
-<span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)
-
-measurements <span class="op">%&lt;&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(dplyr<span class="op">::</span><span class="kw">one_of</span>(<span class="kw">c</span>(group_cols, qc_cols, feature_cols)))</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">qualities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;q_debris&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">groupings &lt;-</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>,</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="st">&quot;g_well&quot;</span>,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">    <span class="st">&quot;g_image&quot;</span>,</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">    <span class="st">&quot;g_pattern&quot;</span>,</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">    <span class="st">&quot;g_channel&quot;</span>)</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">variables &lt;-</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="st">  </span><span class="kw">colnames</span>(measurements) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">measurements <span class="op">%&lt;&gt;%</span></a>
+<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(dplyr<span class="op">::</span><span class="kw">one_of</span>(<span class="kw">c</span>(groupings, qualities, variables)))</a></code></pre></div>
 </div>
 <div id="clean" class="section level2">
 <h2>Clean</h2>
 <p>Let’s remove cells that come from images that were marked as having debris</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">debris_removed &lt;-
-<span class="st">  </span>measurements <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(q_debris <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">debris_removed &lt;-</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span>measurements <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(q_debris <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</a></code></pre></div>
 <p>Then, remove cells where all the measurements are NA’s - this may happen if the identified cell mask was too small to measure any of the features.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">na_rows_removed &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">drop_na_rows</span>(
-    <span class="dt">population =</span> debris_removed,
-    <span class="dt">variables =</span> feature_cols
-  ) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">na_rows_removed &lt;-</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">drop_na_rows</span>(</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">    <span class="dt">population =</span> debris_removed,</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">    <span class="dt">variables =</span> variables</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</a></code></pre></div>
 </div>
 <div id="normalize" class="section level2">
 <h2>Normalize</h2>
@@ -166,32 +400,32 @@ measurements <span class="op">%&lt;&gt;%</span>
 <li><p>plate-to-plate variation is reduced</p></li>
 </ul>
 <p>The default for doing this is <code>standardization</code>. Here, we take all the cells from control wells in the experiment (this is where the external metadata gets used) and compute normalizations parameters from that (in this case, just the mean and s.d.) and then apply it to the whole dataset (i.e. the population)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">normalized &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">normalize</span>(
-    <span class="dt">population =</span> na_rows_removed <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">      </span>dplyr<span class="op">::</span><span class="kw">collect</span>(),
-    <span class="dt">variables =</span> feature_cols,
-    <span class="dt">strata =</span>  <span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>, <span class="st">&quot;g_pattern&quot;</span>, <span class="st">&quot;g_channel&quot;</span>),
-    <span class="dt">sample =</span>
-      na_rows_removed <span class="op">%&gt;%</span>
-<span class="st">      </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(
-        ext_metadata <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">          </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Type <span class="op">==</span><span class="st"> &quot;ctrl&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">          </span>dplyr<span class="op">::</span><span class="kw">select</span>(g_well) 
-      ) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()
-  )</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">normalized &lt;-</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">normalize</span>(</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">    <span class="dt">population =</span> na_rows_removed <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">collect</span>(),</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="dt">variables =</span> variables,</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">    <span class="dt">strata =</span>  <span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>, <span class="st">&quot;g_pattern&quot;</span>, <span class="st">&quot;g_channel&quot;</span>),</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7">    <span class="dt">sample =</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8">      na_rows_removed <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10">        ext_metadata <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Type <span class="op">==</span><span class="st"> &quot;ctrl&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">select</span>(g_well) </a>
+<a class="sourceLine" id="cb12-13" data-line-number="13">      ) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a>
+<a class="sourceLine" id="cb12-14" data-line-number="14">  )</a></code></pre></div>
 <pre><code>## Joining, by = &quot;g_well&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">normalized <span class="op">%&lt;&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">normalized <span class="op">%&lt;&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a></code></pre></div>
 <p>In some cases, we may have features that have no variance at all (e.g. Euler number). If these features have not already been removed by this stage, the standardization step will results in all values for that feature being NA ( because s.d. = 0). Lets remove them:</p>
 <p>First, count how many cells have NA values per feature:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">na_frequency &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">count_na_rows</span>(
-    <span class="dt">population =</span> normalized,
-    <span class="dt">variables =</span> feature_cols)
-
-na_frequency <span class="op">%&gt;%</span>
-<span class="st">  </span>tidyr<span class="op">::</span><span class="kw">gather</span>(feature, na_count) <span class="op">%&gt;%</span>
-<span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">na_frequency &lt;-</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">count_na_rows</span>(</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">    <span class="dt">population =</span> normalized,</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">    <span class="dt">variables =</span> variables)</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">na_frequency <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">gather</span>(feature, na_count) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</a></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -239,59 +473,66 @@ na_frequency <span class="op">%&gt;%</span>
 </tbody>
 </table>
 <p>As it turns out, no feature has NA in this example. But lets run this cleaning operation anyway (no features will be dropped)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cleaned &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(
-    <span class="dt">population =</span> normalized,
-    <span class="dt">variables =</span> feature_cols,
-    <span class="dt">operation =</span> <span class="st">&quot;drop_na_columns&quot;</span>
-)</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">cleaned &lt;-</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">population =</span> normalized,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">    <span class="dt">operation =</span> <span class="st">&quot;drop_na_columns&quot;</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">)</a></code></pre></div>
 </div>
 <div id="transform" class="section level2">
 <h2>Transform</h2>
 <p>Tranform the data so that assumptions we may later make about the data distribution are satisfied (e.g. Gaussianity). The default here is <code>generalized_log</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">transformed &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">transform</span>(
-    <span class="dt">population =</span> cleaned,
-    <span class="dt">variables =</span> feature_cols
-  )</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">transformed &lt;-</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">transform</span>(</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">population =</span> cleaned,</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">    <span class="dt">variables =</span> variables</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">  )</a></code></pre></div>
 </div>
 <div id="select-features" class="section level2">
 <h2>Select features</h2>
 <p>Finally, we typically perform feature selection on the data. Feature selection is an expensive operation, so we usually want to train the feature selection model on a sample of the dataset. Here, we choose to aggregate the data instead of sampling it (i.e. collapse it to per-well aggregates)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aggregated &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">aggregate</span>(
-    <span class="dt">population =</span> transformed,
-    <span class="dt">variables =</span> feature_cols,
-    <span class="dt">strata =</span> group_cols
-  ) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">aggregated &lt;-</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">aggregate</span>(</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">population =</span> transformed,</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">    <span class="dt">strata =</span> groupings</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">variables &lt;-</a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="st">  </span><span class="kw">colnames</span>(aggregated) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</a></code></pre></div>
 <p>… and then apply feature selection on the per-cell data. Here <code>correlation_threshold</code> - a method that reduces the redundancy of features - is used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected &lt;-
-<span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(
-    <span class="dt">population =</span> transformed,
-    <span class="dt">variables =</span> feature_cols,
-    <span class="dt">sample =</span> aggregated,
-    <span class="dt">operation =</span> <span class="st">&quot;correlation_threshold&quot;</span>
-  ) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">selected &lt;-</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">    <span class="dt">population =</span> transformed,</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">    <span class="dt">sample =</span> aggregated,</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">    <span class="dt">operation =</span> <span class="st">&quot;correlation_threshold&quot;</span></a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a></code></pre></div>
 <p>And now lets take a glimpse at the data!</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">glimpse</span>()</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">selected <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">glimpse</span>()</a></code></pre></div>
 <pre><code>## Observations: 315
 ## Variables: 10
-## $ g_plate                                 &lt;chr&gt; &quot;110000106828&quot;, &quot;11000...
-## $ g_well                                  &lt;chr&gt; &quot;A01&quot;, &quot;A01&quot;, &quot;A01&quot;, &quot;...
-## $ g_image                                 &lt;chr&gt; &quot;5a822385194aceb347a07...
-## $ g_pattern                               &lt;chr&gt; &quot;Cells&quot;, &quot;Cells&quot;, &quot;Cel...
-## $ g_channel                               &lt;chr&gt; &quot;Alexa568&quot;, &quot;Alexa568&quot;...
-## $ q_debris                                &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0...
-## $ m_intensities_integrated                &lt;dbl&gt; -1.48831626, -0.067616...
-## $ m_intensities_maximum                   &lt;dbl&gt; -1.25783096, -1.514831...
-## $ m_intensities_median_absolute_deviation &lt;dbl&gt; -1.4847843, -0.5372476...
-## $ m_intensities_minimum                   &lt;dbl&gt; -2.3552231, -1.9025552...</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  DBI<span class="op">::</span><span class="kw">dbDisconnect</span>(db)</code></pre></div>
+## $ g_plate                                 &lt;chr&gt; &quot;110000106828&quot;, &quot;1100001…
+## $ g_well                                  &lt;chr&gt; &quot;A01&quot;, &quot;A01&quot;, &quot;A01&quot;, &quot;A0…
+## $ g_image                                 &lt;chr&gt; &quot;5a822385194aceb347a07f2…
+## $ g_pattern                               &lt;chr&gt; &quot;Cells&quot;, &quot;Cells&quot;, &quot;Cells…
+## $ g_channel                               &lt;chr&gt; &quot;Alexa568&quot;, &quot;Alexa568&quot;, …
+## $ q_debris                                &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ m_intensities_integrated                &lt;dbl&gt; -1.48831626, -0.06761634…
+## $ m_intensities_maximum                   &lt;dbl&gt; -1.25783096, -1.51483166…
+## $ m_intensities_median_absolute_deviation &lt;dbl&gt; -1.4847843, -0.5372476, …
+## $ m_intensities_minimum                   &lt;dbl&gt; -2.3552231, -1.9025552, …</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">  DBI<span class="op">::</span><span class="kw">dbDisconnect</span>(db)</a></code></pre></div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

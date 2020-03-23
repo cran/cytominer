@@ -36,21 +36,21 @@ measurements %>%
   knitr::kable()
 
 ## ------------------------------------------------------------------------
-qc_cols <- c("q_debris")
+qualities <- c("q_debris")
 
-group_cols <-
+groupings <-
   c("g_plate",
     "g_well",
     "g_image",
     "g_pattern",
     "g_channel")
 
-feature_cols <-
+variables <-
   colnames(measurements) %>%
   stringr::str_subset("^m_")
 
 measurements %<>%
-  dplyr::select(dplyr::one_of(c(group_cols, qc_cols, feature_cols)))
+  dplyr::select(dplyr::one_of(c(groupings, qualities, variables)))
 
 
 ## ------------------------------------------------------------------------
@@ -61,7 +61,7 @@ debris_removed <-
 na_rows_removed <-
   cytominer::drop_na_rows(
     population = debris_removed,
-    variables = feature_cols
+    variables = variables
   ) %>%
   dplyr::compute()
 
@@ -70,7 +70,7 @@ normalized <-
   cytominer::normalize(
     population = na_rows_removed %>% 
       dplyr::collect(),
-    variables = feature_cols,
+    variables = variables,
     strata =  c("g_plate", "g_pattern", "g_channel"),
     sample =
       na_rows_removed %>%
@@ -87,7 +87,7 @@ normalized %<>% dplyr::collect()
 na_frequency <-
   cytominer::count_na_rows(
     population = normalized,
-    variables = feature_cols)
+    variables = variables)
 
 na_frequency %>%
   tidyr::gather(feature, na_count) %>%
@@ -99,7 +99,7 @@ na_frequency %>%
 cleaned <-
   cytominer::variable_select(
     population = normalized,
-    variables = feature_cols,
+    variables = variables,
     operation = "drop_na_columns"
 )
 
@@ -107,23 +107,28 @@ cleaned <-
 transformed <-
   cytominer::transform(
     population = cleaned,
-    variables = feature_cols
+    variables = variables
   )
 
 ## ------------------------------------------------------------------------
 aggregated <-
   cytominer::aggregate(
     population = transformed,
-    variables = feature_cols,
-    strata = group_cols
+    variables = variables,
+    strata = groupings
   ) %>%
   dplyr::collect()
+
+variables <-
+  colnames(aggregated) %>%
+  stringr::str_subset("^m_")
+
 
 ## ------------------------------------------------------------------------
 selected <-
   cytominer::variable_select(
     population = transformed,
-    variables = feature_cols,
+    variables = variables,
     sample = aggregated,
     operation = "correlation_threshold"
   ) %>%
