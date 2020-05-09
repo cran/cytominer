@@ -1,3 +1,8 @@
+# cytominer 0.2.2
+
+- Maintenance release in preparation for `dplyr 1.0.0` (#146)
+- Improve tests and change robustize behavior (#141)
+
 # cytominer 0.2.1
 
 This is a minor release but contains several new functions as well as a long-pending fix for incompatibility with the new (2018) tidyeval API.

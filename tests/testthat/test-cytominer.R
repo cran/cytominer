@@ -11,7 +11,7 @@ test_that("cytominer can process dataset with a normalized schema", {
       package = "cytominer"
     )
 
-  db <- dplyr::src_sqlite(path = fixture)
+  db <- DBI::dbConnect(RSQLite::SQLite(), fixture)
 
   ext_metadata <-
     readr::read_csv(system.file(
@@ -115,6 +115,24 @@ test_that("cytominer can process dataset with a normalized schema", {
       variables = variables
     )
 
+  transformed_whiten <-
+    transform(
+      population = cleaned,
+      sample = cleaned,
+      variables = variables,
+      operation = "whiten"
+    )
+
+  # this should go in a unit test for `transform`
+  expect_error(
+    transform(
+      population = transformed,
+      variables = variables,
+      operation = "dummy"
+    ),
+    paste0("undefined operation 'dummy'")
+  )
+
   # aggregation (mean by default)
   aggregated <-
     aggregate(
@@ -137,6 +155,47 @@ test_that("cytominer can process dataset with a normalized schema", {
       sample = aggregated
     ) %>%
     dplyr::collect()
+
+  selected <-
+    variable_select(
+      population = transformed,
+      variables = variables,
+      operation = "variance_threshold",
+      sample = aggregated
+    ) %>%
+    dplyr::collect()
+
+  # this should go in a unit test for `variable_select`
+  expect_error(
+    variable_select(
+      population = transformed,
+      variables = variables,
+      sample = aggregated,
+      operation = "dummy"
+    ),
+    paste0("undefined operation 'dummy'")
+  )
+
+  # importance <-
+  #   variable_importance(
+  #     sample = transformed,
+  #     variables = variables,
+  #     strata = groupings,
+  #     replicates = 2,
+  #     operation = "replicate_correlation"
+  #   )
+
+  # this should go in a unit test for `variable_importance`
+  expect_error(
+    variable_importance(
+      sample = transformed,
+      variables = variables,
+      operation = "dummy"
+    ),
+    paste0("undefined operation 'dummy'")
+  )
+
+  DBI::dbDisconnect(db)
 })
 
 test_that("cytominer can process dataset with a CellProfiler schema", {
@@ -316,6 +375,15 @@ test_that("cytominer can process dataset with a CellProfiler schema", {
       variables = variables,
       sample = aggregated,
       operation = "correlation_threshold"
+    ) %>%
+    dplyr::collect()
+
+  selected <-
+    variable_select(
+      population = transformed,
+      variables = variables,
+      sample = aggregated,
+      operation = "variance_threshold"
     ) %>%
     dplyr::collect()
 

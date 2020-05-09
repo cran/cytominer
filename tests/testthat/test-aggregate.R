@@ -7,10 +7,10 @@ test_that("`aggregate` aggregates data", {
       data.frame(g = "b", x = rnorm(5), y = rnorm(5))
     )
 
-  db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-
-  # https://github.com/tidyverse/dplyr/issues/3093
-  RSQLite::initExtension(db)
+  db <- DBI::dbConnect(RSQLite::SQLite(),
+    ":memory:",
+    loadable.extensions = TRUE
+  )
 
   data <- dplyr::copy_to(db, data)
 
@@ -27,7 +27,8 @@ test_that("`aggregate` aggregates data", {
       dplyr::summarise_at(
         .funs = ~ MEDIAN(.),
         .vars = c("x", "y")
-      )
+      ) %>%
+      dplyr::collect()
   )
 
   expect_equal(
@@ -43,7 +44,8 @@ test_that("`aggregate` aggregates data", {
       dplyr::summarise_at(
         .funs = ~ MEDIAN(.),
         .vars = c("x", "y")
-      )
+      ) %>%
+      dplyr::collect()
   )
 
   expect_equal(
@@ -59,7 +61,8 @@ test_that("`aggregate` aggregates data", {
       dplyr::summarise_at(
         .funs = c(~ mean(., na.rm = T), ~ sd(., na.rm = T)),
         .vars = c("x", "y")
-      )
+      ) %>%
+      dplyr::collect()
   )
 
   cov_a <-
@@ -84,6 +87,16 @@ test_that("`aggregate` aggregates data", {
       y__x = cov_a[1, 2],
       y__y = cov_a[2, 2]
     )
+  )
+
+  expect_error(
+    aggregate(
+      population = data,
+      variables = c("x", "y"),
+      strata = c("g"),
+      operation = "dummy"
+    ),
+    paste0("undefined operation 'dummy'")
   )
 
   DBI::dbDisconnect(db)

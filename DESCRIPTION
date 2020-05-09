@@ -2,7 +2,7 @@ Encoding: UTF-8
 Package: cytominer
 Type: Package
 Title: Methods for Image-Based Cell Profiling
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: c(person("Tim", "Becker", email = "tbecker@broadinstitute.org", role = "aut"),
     person("Allen", "Goodman", email = "allen.goodman@icloud.com", role = "aut"),
     person("Claire", "McQuin", email = "mcquin@broadinstitute.org", role = "aut"),
@@ -30,9 +30,9 @@ Suggests: DBI (>= 0.7), dbplyr (>= 1.4.2), knitr (>= 1.17), lazyeval
 VignetteBuilder: knitr
 URL: https://github.com/cytomining/cytominer
 BugReports: https://github.com/cytomining/cytominer/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 NeedsCompilation: no
-Packaged: 2020-03-20 21:09:50 UTC; shsingh
+Packaged: 2020-05-09 03:40:43 UTC; shsingh
 Author: Tim Becker [aut],
   Allen Goodman [aut],
   Claire McQuin [aut],
@@ -40,4 +40,4 @@ Author: Tim Becker [aut],
   Shantanu Singh [aut, cre]
 Maintainer: Shantanu Singh <shsingh@broadinstitute.org>
 Repository: CRAN
-Date/Publication: 2020-03-23 10:40:02 UTC
+Date/Publication: 2020-05-09 05:00:03 UTC

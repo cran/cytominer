@@ -1,46 +1,59 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Allen Goodman and Shantanu Singh" />
 
-<meta name="date" content="2020-03-20" />
+<meta name="date" content="2020-05-08" />
 
 <title>Introduction to cytominer</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +62,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -118,9 +131,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -289,7 +299,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -304,7 +315,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Introduction to cytominer</h1>
 <h4 class="author">Allen Goodman and Shantanu Singh</h4>
-<h4 class="date">2020-03-20</h4>
+<h4 class="date">2020-05-08</h4>
 
 
 
@@ -321,34 +332,34 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
 <p>First, load the data, which is stored in a database backend created using <a href="https://github.com/cytomining/cytominer-database" class="uri">https://github.com/cytomining/cytominer-database</a>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">fixture &lt;-</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;fixture_intensities_shapes.sqlite&quot;</span>,</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">db &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), fixture)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>fixture &lt;-</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;fixture_intensities_shapes.sqlite&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3"></a>              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a>db &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), fixture)</span></code></pre></div>
 <p>Then load associated metadata if it exists, and copy it to the backend so that we can use it later.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">ext_metadata &lt;-</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;metadata.csv&quot;</span>,</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">                              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">g_well =</span> Well)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>ext_metadata &lt;-</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="st">  </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;metadata.csv&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3"></a>                              <span class="dt">package =</span> <span class="st">&quot;cytominer&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">g_well =</span> Well)</span></code></pre></div>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   Well = col_character(),
 ##   Type = col_character()
 ## )</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">ext_metadata &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">copy_to</span>(db, ext_metadata)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>ext_metadata &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">copy_to</span>(db, ext_metadata)</span></code></pre></div>
 <p>Next, select a measurement table that you want to work. Here, we will pick <code>intensities</code> but we can easily extend to using multiple or all measurement classes if needed by creating new views.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">intensities &lt;-</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tbl</span>(<span class="dt">src =</span> db, <span class="st">&quot;view_intensities&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>intensities &lt;-</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tbl</span>(<span class="dt">src =</span> db, <span class="st">&quot;view_intensities&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</span></code></pre></div>
 <p>For this example, lets filter the data down to a few wells.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">measurements &lt;-</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span>intensities <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(g_well <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A01&quot;</span>, <span class="st">&quot;A02&quot;</span>, <span class="st">&quot;A10&quot;</span>, <span class="st">&quot;A11&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>measurements &lt;-</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="st">  </span>intensities <span class="op">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(g_well <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A01&quot;</span>, <span class="st">&quot;A02&quot;</span>, <span class="st">&quot;A10&quot;</span>, <span class="st">&quot;A11&quot;</span>))</span></code></pre></div>
 <p>How many rows does this table have?</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">measurements <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>measurements <span class="op">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>() <span class="op">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -363,34 +374,34 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 <p>That actually 9 times the number of cells in this experiment (n = 40): each compartment and each channel gets its own row. Here, we have 3 compartments (cell, nucleus, cytoplasm) and 3 channels (CellMask, Hoechst, Alexa568). So that’s 3 x 3 x 40 = 360.</p>
 <p>Next, do some setup stuff that we will need later</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">qualities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;q_debris&quot;</span>)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">groupings &lt;-</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>,</a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="st">&quot;g_well&quot;</span>,</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6">    <span class="st">&quot;g_image&quot;</span>,</a>
-<a class="sourceLine" id="cb9-7" data-line-number="7">    <span class="st">&quot;g_pattern&quot;</span>,</a>
-<a class="sourceLine" id="cb9-8" data-line-number="8">    <span class="st">&quot;g_channel&quot;</span>)</a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10">variables &lt;-</a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="st">  </span><span class="kw">colnames</span>(measurements) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14">measurements <span class="op">%&lt;&gt;%</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(dplyr<span class="op">::</span><span class="kw">one_of</span>(<span class="kw">c</span>(groupings, qualities, variables)))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>qualities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;q_debris&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a></span>
+<span id="cb9-3"><a href="#cb9-3"></a>groupings &lt;-</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5"></a>    <span class="st">&quot;g_well&quot;</span>,</span>
+<span id="cb9-6"><a href="#cb9-6"></a>    <span class="st">&quot;g_image&quot;</span>,</span>
+<span id="cb9-7"><a href="#cb9-7"></a>    <span class="st">&quot;g_pattern&quot;</span>,</span>
+<span id="cb9-8"><a href="#cb9-8"></a>    <span class="st">&quot;g_channel&quot;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a>variables &lt;-</span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="st">  </span><span class="kw">colnames</span>(measurements) <span class="op">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</span>
+<span id="cb9-13"><a href="#cb9-13"></a></span>
+<span id="cb9-14"><a href="#cb9-14"></a>measurements <span class="op">%&lt;&gt;%</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(dplyr<span class="op">::</span><span class="kw">one_of</span>(<span class="kw">c</span>(groupings, qualities, variables)))</span></code></pre></div>
 </div>
 <div id="clean" class="section level2">
 <h2>Clean</h2>
 <p>Let’s remove cells that come from images that were marked as having debris</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">debris_removed &lt;-</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span>measurements <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(q_debris <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>debris_removed &lt;-</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="st">  </span>measurements <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(q_debris <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</span></code></pre></div>
 <p>Then, remove cells where all the measurements are NA’s - this may happen if the identified cell mask was too small to measure any of the features.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">na_rows_removed &lt;-</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">drop_na_rows</span>(</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">    <span class="dt">population =</span> debris_removed,</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4">    <span class="dt">variables =</span> variables</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>na_rows_removed &lt;-</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">drop_na_rows</span>(</span>
+<span id="cb11-3"><a href="#cb11-3"></a>    <span class="dt">population =</span> debris_removed,</span>
+<span id="cb11-4"><a href="#cb11-4"></a>    <span class="dt">variables =</span> variables</span>
+<span id="cb11-5"><a href="#cb11-5"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">compute</span>()</span></code></pre></div>
 </div>
 <div id="normalize" class="section level2">
 <h2>Normalize</h2>
@@ -400,32 +411,32 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><p>plate-to-plate variation is reduced</p></li>
 </ul>
 <p>The default for doing this is <code>standardization</code>. Here, we take all the cells from control wells in the experiment (this is where the external metadata gets used) and compute normalizations parameters from that (in this case, just the mean and s.d.) and then apply it to the whole dataset (i.e. the population)</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">normalized &lt;-</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">normalize</span>(</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">    <span class="dt">population =</span> na_rows_removed <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">collect</span>(),</a>
-<a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="dt">variables =</span> variables,</a>
-<a class="sourceLine" id="cb12-6" data-line-number="6">    <span class="dt">strata =</span>  <span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>, <span class="st">&quot;g_pattern&quot;</span>, <span class="st">&quot;g_channel&quot;</span>),</a>
-<a class="sourceLine" id="cb12-7" data-line-number="7">    <span class="dt">sample =</span></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8">      na_rows_removed <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(</a>
-<a class="sourceLine" id="cb12-10" data-line-number="10">        ext_metadata <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Type <span class="op">==</span><span class="st"> &quot;ctrl&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">select</span>(g_well) </a>
-<a class="sourceLine" id="cb12-13" data-line-number="13">      ) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a>
-<a class="sourceLine" id="cb12-14" data-line-number="14">  )</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>normalized &lt;-</span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">normalize</span>(</span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="dt">population =</span> na_rows_removed <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">collect</span>(),</span>
+<span id="cb12-5"><a href="#cb12-5"></a>    <span class="dt">variables =</span> variables,</span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="dt">strata =</span>  <span class="kw">c</span>(<span class="st">&quot;g_plate&quot;</span>, <span class="st">&quot;g_pattern&quot;</span>, <span class="st">&quot;g_channel&quot;</span>),</span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="dt">sample =</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>      na_rows_removed <span class="op">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(</span>
+<span id="cb12-10"><a href="#cb12-10"></a>        ext_metadata <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Type <span class="op">==</span><span class="st"> &quot;ctrl&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">select</span>(g_well) </span>
+<span id="cb12-13"><a href="#cb12-13"></a>      ) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</span>
+<span id="cb12-14"><a href="#cb12-14"></a>  )</span></code></pre></div>
 <pre><code>## Joining, by = &quot;g_well&quot;</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">normalized <span class="op">%&lt;&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>normalized <span class="op">%&lt;&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</span></code></pre></div>
 <p>In some cases, we may have features that have no variance at all (e.g. Euler number). If these features have not already been removed by this stage, the standardization step will results in all values for that feature being NA ( because s.d. = 0). Lets remove them:</p>
 <p>First, count how many cells have NA values per feature:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">na_frequency &lt;-</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">count_na_rows</span>(</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">    <span class="dt">population =</span> normalized,</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">    <span class="dt">variables =</span> variables)</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6">na_frequency <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">gather</span>(feature, na_count) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>na_frequency &lt;-</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">count_na_rows</span>(</span>
+<span id="cb15-3"><a href="#cb15-3"></a>    <span class="dt">population =</span> normalized,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>    <span class="dt">variables =</span> variables)</span>
+<span id="cb15-5"><a href="#cb15-5"></a></span>
+<span id="cb15-6"><a href="#cb15-6"></a>na_frequency <span class="op">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">gather</span>(feature, na_count) <span class="op">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -473,61 +484,65 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tbody>
 </table>
 <p>As it turns out, no feature has NA in this example. But lets run this cleaning operation anyway (no features will be dropped)</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">cleaned &lt;-</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">population =</span> normalized,</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">    <span class="dt">operation =</span> <span class="st">&quot;drop_na_columns&quot;</span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6">)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>cleaned &lt;-</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</span>
+<span id="cb16-3"><a href="#cb16-3"></a>    <span class="dt">population =</span> normalized,</span>
+<span id="cb16-4"><a href="#cb16-4"></a>    <span class="dt">variables =</span> variables,</span>
+<span id="cb16-5"><a href="#cb16-5"></a>    <span class="dt">operation =</span> <span class="st">&quot;drop_na_columns&quot;</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7"></a></span>
+<span id="cb16-8"><a href="#cb16-8"></a>variables &lt;-</span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="st">  </span><span class="kw">colnames</span>(cleaned) <span class="op">%&gt;%</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</span></code></pre></div>
 </div>
 <div id="transform" class="section level2">
 <h2>Transform</h2>
 <p>Tranform the data so that assumptions we may later make about the data distribution are satisfied (e.g. Gaussianity). The default here is <code>generalized_log</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">transformed &lt;-</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">transform</span>(</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">population =</span> cleaned,</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">    <span class="dt">variables =</span> variables</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">  )</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>transformed &lt;-</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">transform</span>(</span>
+<span id="cb17-3"><a href="#cb17-3"></a>    <span class="dt">population =</span> cleaned,</span>
+<span id="cb17-4"><a href="#cb17-4"></a>    <span class="dt">variables =</span> variables</span>
+<span id="cb17-5"><a href="#cb17-5"></a>  )</span></code></pre></div>
 </div>
 <div id="select-features" class="section level2">
 <h2>Select features</h2>
 <p>Finally, we typically perform feature selection on the data. Feature selection is an expensive operation, so we usually want to train the feature selection model on a sample of the dataset. Here, we choose to aggregate the data instead of sampling it (i.e. collapse it to per-well aggregates)</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">aggregated &lt;-</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">aggregate</span>(</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">population =</span> transformed,</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">    <span class="dt">strata =</span> groupings</a>
-<a class="sourceLine" id="cb18-6" data-line-number="6">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a>
-<a class="sourceLine" id="cb18-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb18-9" data-line-number="9">variables &lt;-</a>
-<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="st">  </span><span class="kw">colnames</span>(aggregated) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>aggregated &lt;-</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">aggregate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3"></a>    <span class="dt">population =</span> transformed,</span>
+<span id="cb18-4"><a href="#cb18-4"></a>    <span class="dt">variables =</span> variables,</span>
+<span id="cb18-5"><a href="#cb18-5"></a>    <span class="dt">strata =</span> groupings</span>
+<span id="cb18-6"><a href="#cb18-6"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</span>
+<span id="cb18-8"><a href="#cb18-8"></a></span>
+<span id="cb18-9"><a href="#cb18-9"></a>variables &lt;-</span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="st">  </span><span class="kw">colnames</span>(aggregated) <span class="op">%&gt;%</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="st">  </span>stringr<span class="op">::</span><span class="kw">str_subset</span>(<span class="st">&quot;^m_&quot;</span>)</span></code></pre></div>
 <p>… and then apply feature selection on the per-cell data. Here <code>correlation_threshold</code> - a method that reduces the redundancy of features - is used.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">selected &lt;-</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</a>
-<a class="sourceLine" id="cb19-3" data-line-number="3">    <span class="dt">population =</span> transformed,</a>
-<a class="sourceLine" id="cb19-4" data-line-number="4">    <span class="dt">variables =</span> variables,</a>
-<a class="sourceLine" id="cb19-5" data-line-number="5">    <span class="dt">sample =</span> aggregated,</a>
-<a class="sourceLine" id="cb19-6" data-line-number="6">    <span class="dt">operation =</span> <span class="st">&quot;correlation_threshold&quot;</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>selected &lt;-</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="st">  </span>cytominer<span class="op">::</span><span class="kw">variable_select</span>(</span>
+<span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">population =</span> transformed,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>    <span class="dt">variables =</span> variables,</span>
+<span id="cb19-5"><a href="#cb19-5"></a>    <span class="dt">sample =</span> aggregated,</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    <span class="dt">operation =</span> <span class="st">&quot;correlation_threshold&quot;</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">collect</span>()</span></code></pre></div>
 <p>And now lets take a glimpse at the data!</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">selected <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">glimpse</span>()</a></code></pre></div>
-<pre><code>## Observations: 315
-## Variables: 10
-## $ g_plate                                 &lt;chr&gt; &quot;110000106828&quot;, &quot;1100001…
-## $ g_well                                  &lt;chr&gt; &quot;A01&quot;, &quot;A01&quot;, &quot;A01&quot;, &quot;A0…
-## $ g_image                                 &lt;chr&gt; &quot;5a822385194aceb347a07f2…
-## $ g_pattern                               &lt;chr&gt; &quot;Cells&quot;, &quot;Cells&quot;, &quot;Cells…
-## $ g_channel                               &lt;chr&gt; &quot;Alexa568&quot;, &quot;Alexa568&quot;, …
-## $ q_debris                                &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, …
-## $ m_intensities_integrated                &lt;dbl&gt; -1.48831626, -0.06761634…
-## $ m_intensities_maximum                   &lt;dbl&gt; -1.25783096, -1.51483166…
-## $ m_intensities_median_absolute_deviation &lt;dbl&gt; -1.4847843, -0.5372476, …
-## $ m_intensities_minimum                   &lt;dbl&gt; -2.3552231, -1.9025552, …</code></pre>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">  DBI<span class="op">::</span><span class="kw">dbDisconnect</span>(db)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>selected <span class="op">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">glimpse</span>()</span></code></pre></div>
+<pre><code>## Rows: 315
+## Columns: 10
+## $ g_plate                                 &lt;chr&gt; &quot;110000106828&quot;, &quot;110000106828…
+## $ g_well                                  &lt;chr&gt; &quot;A01&quot;, &quot;A01&quot;, &quot;A01&quot;, &quot;A01&quot;, &quot;…
+## $ g_image                                 &lt;chr&gt; &quot;5a822385194aceb347a07f27285d…
+## $ g_pattern                               &lt;chr&gt; &quot;Cells&quot;, &quot;Cells&quot;, &quot;Cells&quot;, &quot;C…
+## $ g_channel                               &lt;chr&gt; &quot;Alexa568&quot;, &quot;Alexa568&quot;, &quot;Alex…
+## $ q_debris                                &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ m_intensities_integrated                &lt;dbl&gt; -1.48831626, -0.06761634, -0.…
+## $ m_intensities_maximum                   &lt;dbl&gt; -1.25783096, -1.51483166, -1.…
+## $ m_intensities_median_absolute_deviation &lt;dbl&gt; -1.4847843, -0.5372476, -1.10…
+## $ m_intensities_minimum                   &lt;dbl&gt; -2.3552231, -1.9025552, -0.10…</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>  DBI<span class="op">::</span><span class="kw">dbDisconnect</span>(db)</span></code></pre></div>
 </div>
 
 
